@@ -97,6 +97,9 @@ const FileUpload = () => {
       setIsComplete(true)
     } catch (error) {
       console.log(error)
+      setIsLoading(false)
+      setIsComplete(false)
+      alert("Error Minting NFT")
     }
   }
   

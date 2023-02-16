@@ -22,6 +22,7 @@ export default async function handler(req, res) {
   res.status(200).json({ mintTxn })
   } catch (error) {
     console.log(error)
+    res.status(500).json({ text: "Error minting NFT", error: error })
   }
 }
 
