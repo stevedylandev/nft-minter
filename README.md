@@ -2,6 +2,21 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
+Create a new .env.local by copying the example
+```bash
+cp .env.example .env.local
+```
+
+Fill out all required keys
+```
+NEXT_PUBLIC_PINATA_JWT=
+NEXT_PUBLIC_DEFENDER_KEY=
+NEXT_PUBLIC_DEFENDER_SECRET_KEY=
+NEXT_PUBLIC_CONTRACT_ADDRESS=
+NEXT_PUBLIC_PRIVY_ID=
+
+```
+
 First, run the development server:
 
 ```bash
