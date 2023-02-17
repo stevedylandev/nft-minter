@@ -2,12 +2,12 @@ import { useState } from 'react'
 import axios from 'axios'
 import styles from '@/styles/Form.module.css'
 import RingLoader from "react-spinners/RingLoader"
-
+import { usePrivy } from "@privy-io/react-auth"
 
 const JWT = `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
-const FileUpload = () => {
+const Form = () => {
   const [selectedFile, setSelectedFile] = useState()
   const [name, setName] = useState()
   const [description, setDescription] = useState()
@@ -18,6 +18,7 @@ const FileUpload = () => {
   const [message, setMessage] = useState("")
   const [isComplete, setIsComplete] = useState(false)
 
+  const { ready, authenticated, user, logout } = usePrivy()
   const fileChangeHandler = (event) => {
     setSelectedFile(event.target.files[0])
   }
@@ -83,7 +84,7 @@ const FileUpload = () => {
       const uri = jsonRes.data.IpfsHash
 
       const mintBody = {
-        walletAddress: sendTo,
+        walletAddress: ready ? user.wallet.address : sendTo,
         uri: `https://discordpinnie.mypinata.cloud/ipfs/${uri}`
       }
 
@@ -126,13 +127,19 @@ const FileUpload = () => {
         placeholder='https://pinata.cloud'
         onChange={externalURLChangeHandler}
       />
-      <label>Wallet Address</label>
-      <input
-        type='text'
-        placeholder='0x...'
-        onChange={sendToChangeHandler}
-      />
+      {ready && authenticated && !user.wallet && (
+      <>
+        <label>Wallet Address</label>
+        <input
+          type='text'
+          placeholder='0x...'
+          onChange={sendToChangeHandler}
+          defaultValue={ready && authenticated && user.wallet ? user.wallet.address : sendTo}
+        />
+      </>
+      )}
       <button onClick={handleSubmission}>Submit</button>
+      <button onClick={logout}>Logout</button>
       </>
       )}
       {isLoading && (
@@ -141,7 +148,7 @@ const FileUpload = () => {
             loading={isLoading}
             size={200}
             aria-label="loading spinner"
-            color="#CC007E"
+            color="#8000db"
             />
           <h2>{message}</h2>
         </div>
@@ -157,4 +164,4 @@ const FileUpload = () => {
   )
 }
 
-export default FileUpload
+export default Form

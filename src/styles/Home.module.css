@@ -7,3 +7,12 @@
   min-height: 100vh;
 }
 
+.loginButton {
+  padding: 0.5rem 0rem;
+  background-color: #8000db;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  width: 15rem;
+}
