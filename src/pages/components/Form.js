@@ -3,6 +3,7 @@ import axios from 'axios'
 import styles from '@/styles/Form.module.css'
 import RingLoader from "react-spinners/RingLoader"
 import { usePrivy } from "@privy-io/react-auth"
+import fireConfetti from "../utils/confetti"
 
 const JWT = `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
@@ -93,9 +94,10 @@ const Form = () => {
       console.log(mintRes)
       
       setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.data.mintTxn.events.Transfer.returnValues.tokenId}`)
-      setMessage("Minting Complete! Click the link below to see your NFT")
+      setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)
+      await fireConfetti()
     } catch (error) {
       console.log(error)
       setIsLoading(false)
@@ -139,7 +141,7 @@ const Form = () => {
       </>
       )}
       <button onClick={handleSubmission}>Submit</button>
-      <button onClick={logout}>Logout</button>
+      <button className={styles.logout} onClick={logout}>Logout</button>
       </>
       )}
       {isLoading && (
@@ -148,16 +150,16 @@ const Form = () => {
             loading={isLoading}
             size={200}
             aria-label="loading spinner"
-            color="#8000db"
+            color="#aa76ff"
             />
           <h2>{message}</h2>
         </div>
       )}
       {isComplete && (
-        <div className={styles.complete}>
-          <h3>{message}</h3>
-          <a href={osLink} target="_blank" rel="noreferrer">{osLink}</a>
-          <button onClick={() => setIsComplete(false) }>Mint Another NFT</button>
+        <div className={styles.form}>
+          <h4>{message}</h4>
+          <a href={osLink} target="_blank" className={styles.link} rel="noreferrer"><h3>Link to NFT</h3></a>
+          <button onClick={() => setIsComplete(false) } className={styles.logout}>Mint Another NFT</button>
         </div>
       )}
     </div>

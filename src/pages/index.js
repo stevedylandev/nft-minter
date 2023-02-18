@@ -3,6 +3,8 @@ import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import {usePrivy} from '@privy-io/react-auth';
 import Form from "./components/Form"
+import Image from "next/image"
+import pinnie from "../../public/Pinnie.svg"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -25,6 +27,8 @@ export default function Home() {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <main className={styles.main}>
+        <div className={styles.container}>
+        <Image src={pinnie} alt="Pinnie Logo" height={75} />
         <h1 className={inter.className}>Pinata NFT Minter</h1>
         {!authenticated && ready && (
           <button className={styles.loginButton} onClick={login}>Login</button>
@@ -32,6 +36,7 @@ export default function Home() {
         {authenticated && ready && (
           <Form />
         )}
+        </div>
       </main>
     </>
   )
