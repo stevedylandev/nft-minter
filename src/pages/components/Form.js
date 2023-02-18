@@ -3,7 +3,7 @@ import axios from 'axios'
 import styles from '@/styles/Form.module.css'
 import RingLoader from "react-spinners/RingLoader"
 import { usePrivy } from "@privy-io/react-auth"
-import fireConfetti from "../utils/confetti"
+import fireConfetti from "../../utils/confetti"
 
 const JWT = `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
@@ -97,7 +97,7 @@ const Form = () => {
       setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)
-      await fireConfetti()
+      fireConfetti()
     } catch (error) {
       console.log(error)
       setIsLoading(false)

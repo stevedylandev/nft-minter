@@ -4,7 +4,7 @@ var defaults = {
   origin: { y: 0.7 }
 };
 
-const fireConfetti = async () => {
+const fireConfetti = () => {
 function fire(particleRatio, opts) {
   confetti(Object.assign({}, defaults, opts, {
     particleCount: Math.floor(count * particleRatio)

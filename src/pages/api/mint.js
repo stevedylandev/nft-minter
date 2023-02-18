@@ -1,6 +1,6 @@
 import { DefenderRelayProvider } from "defender-relay-client/lib/web3"
 import Web3 from "web3"
-import abi from "../utils/abi.json"
+import abi from "../../utils/abi.json"
 
 const credentials = {apiKey: `${process.env.NEXT_PUBLIC_DEFENDER_KEY}`, apiSecret: `${process.env.NEXT_PUBLIC_DEFENDER_SECRET_KEY}`}
 const provider = new DefenderRelayProvider(credentials, { speed: 'fast' });
