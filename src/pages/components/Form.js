@@ -51,6 +51,7 @@ const Form = () => {
         body: formData
       })
       const mintRes = await res.json()
+      console.log(mintRes)
       setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.mintTxn.events.Transfer.returnValues.tokenId}`)
       setMessage("Minting Complete!")
       setIsLoading(false)
@@ -60,7 +61,7 @@ const Form = () => {
       console.log(error)
       setIsLoading(false)
       setIsComplete(false)
-      alert("Error Minting NFT")
+      alert("Error Minting NFT", error.message)
     }
   }
 
