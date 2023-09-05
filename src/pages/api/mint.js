@@ -15,6 +15,7 @@ const web3 = new Web3(provider)
 export const config = {
   api: {
     bodyParser: false,
+    responseLimit: false
   },
 };
 
