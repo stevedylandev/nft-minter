@@ -71,7 +71,7 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.log(error)
-    res.status(500).send({ text: "Error minting NFT", error: error })
+    res.status(500).send(error)
   }
 }
 

@@ -50,6 +50,7 @@ const Form = () => {
         method: 'POST',
         body: formData
       })
+      console.log(res)
       const mintRes = await res.json()
       console.log(mintRes)
       setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.mintTxn.events.Transfer.returnValues.tokenId}`)
