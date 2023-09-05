@@ -53,7 +53,7 @@ const Form = () => {
       console.log(res)
       const mintRes = await res.json()
       console.log(mintRes)
-      setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.mintTxn.events.Transfer.returnValues.tokenId}`)
+      setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.events.Transfer.returnValues.tokenId}`)
       setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)
