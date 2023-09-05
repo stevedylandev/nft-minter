@@ -67,9 +67,8 @@ export default async function handler(req, res) {
       const contract = new web3.eth.Contract(abi.output.abi, contractAddress, { from })
       const mintTxn = await contract.methods.safeMint(address, uri).send()
       console.log(mintTxn)
+      res.status(200).json({ mintTxn })
     });
-
-    res.status(200).json({ mintTxn })
   } catch (error) {
     console.log(error)
     res.status(500).json({ text: "Error minting NFT", error: error })

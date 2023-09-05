@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import axios from 'axios'
 import styles from '@/styles/Form.module.css'
 import RingLoader from "react-spinners/RingLoader"
 import { usePrivy } from "@privy-io/react-auth"
@@ -37,22 +36,22 @@ const Form = () => {
   }
 
   const handleSubmission = async () => {
-    setIsLoading(true)
-    const formData = new FormData()
-
-    formData.append('file', selectedFile, { filename: selectedFile.name })
-    formData.append('walletAddress', ready ? user.wallet.address : sendTo)
-    formData.append('name', name)
-    formData.append('description', description)
-    formData.append('externalURL', externalURL)
-
     try {
+      setIsLoading(true)
+      const formData = new FormData()
+
+      formData.append('file', selectedFile, { filename: selectedFile.name })
+      formData.append('walletAddress', ready ? user.wallet.address : sendTo)
+      formData.append('name', name)
+      formData.append('description', description)
+      formData.append('externalURL', externalURL)
       setMessage("Minting NFT...")
       const res = await fetch("/api/mint", {
         method: 'POST',
         body: formData
       })
-      setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${res.data.mintTxn.events.Transfer.returnValues.tokenId}`)
+      const mintRes = await res.json()
+      setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.mintTxn.events.Transfer.returnValues.tokenId}`)
       setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)
