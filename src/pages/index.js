@@ -9,9 +9,8 @@ import pinnie from "../../public/Pinnie.svg"
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  const { login } = usePrivy()
 
-   const { ready, authenticated } = usePrivy()
+   const { login, ready, authenticated } = usePrivy()
 
     if (!ready) {
         // Do nothing while the PrivyProvider initializes with updated user state

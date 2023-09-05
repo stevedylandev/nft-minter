@@ -5,7 +5,6 @@ import RingLoader from "react-spinners/RingLoader"
 import { usePrivy } from "@privy-io/react-auth"
 import fireConfetti from "../../utils/confetti"
 
-const JWT = `Bearer ${process.env.NEXT_PUBLIC_PINATA_JWT}`
 const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 const Form = () => {
@@ -20,6 +19,7 @@ const Form = () => {
   const [isComplete, setIsComplete] = useState(false)
 
   const { ready, authenticated, user, logout } = usePrivy()
+
   const fileChangeHandler = (event) => {
     setSelectedFile(event.target.files[0])
   }
@@ -40,60 +40,19 @@ const Form = () => {
     setIsLoading(true)
     const formData = new FormData()
 
-    formData.append('file', selectedFile)
-
-    const metadata = JSON.stringify({
-      name: '${selectedFile}',
-    })
-    formData.append('pinataMetadata', metadata)
-
-    const options = JSON.stringify({
-      cidVersion: 0,
-    })
-    formData.append('pinataOptions', options)
+    formData.append('file', selectedFile, { filename: selectedFile.name })
+    formData.append('walletAddress', ready ? user.wallet.address : sendTo)
+    formData.append('name', name)
+    formData.append('description', description)
+    formData.append('externalURL', externalURL)
 
     try {
-      setMessage("Uploading File...")
-      const uploadRes = await axios.post(
-        'https://api.pinata.cloud/pinning/pinFileToIPFS',
-        formData,
-        {
-          maxBodyLength: 'Infinity',
-          headers: {
-            'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-            Authorization: JWT,
-          },
-        }
-      )
-      console.log(uploadRes.data)
-      const hash = uploadRes.data.IpfsHash
-
-      const jsonData = JSON.stringify({
-        name: name,
-        description: description,
-        image: `https://discordpinnie.mypinata.cloud/ipfs/${hash}`,
-        external_url: externalURL
-      })
-      setMessage("Uploading Metadata...")
-      const jsonRes = await axios.post("https://api.pinata.cloud/pinning/pinJSONToIPFS", jsonData, {
-          maxBodyLength: 'Infinity',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: JWT,
-          },
-      })
-      const uri = jsonRes.data.IpfsHash
-
-      const mintBody = {
-        walletAddress: ready ? user.wallet.address : sendTo,
-        uri: `https://discordpinnie.mypinata.cloud/ipfs/${uri}`
-      }
-
       setMessage("Minting NFT...")
-      const mintRes = await axios.post("/api/mint", mintBody)
-      console.log(mintRes)
-      
-      setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.data.mintTxn.events.Transfer.returnValues.tokenId}`)
+      const res = await fetch("/api/mint", {
+        method: 'POST',
+        body: formData
+      })
+      setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${res.data.mintTxn.events.Transfer.returnValues.tokenId}`)
       setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)
@@ -105,44 +64,44 @@ const Form = () => {
       alert("Error Minting NFT")
     }
   }
-  
+
 
   return (
     <div className={styles.form}>
       {!isLoading && !isComplete && (
         <>
-      <label className={styles.formInput} onChange={fileChangeHandler} htmlFor="file">
-        <input name="" type="file" id="file" hidden />
-        <p>{!selectedFile ? "Select File" : `${selectedFile.name}`}</p>
-      </label>
-      <label>Name</label>
-      <input type='text' placeholder='Cool NFT' onChange={nameChangeHandler} />
-      <label>Description</label>
-      <input
-        type='text'
-        placeholder='This NFT is just so cool'
-        onChange={descriptionChangeHandler}
-      />
-      <label>Your Website</label>
-      <input
-        type='text'
-        placeholder='https://pinata.cloud'
-        onChange={externalURLChangeHandler}
-      />
-      {ready && authenticated && !user.wallet && (
-      <>
-        <label>Wallet Address</label>
-        <input
-          type='text'
-          placeholder='0x...'
-          onChange={sendToChangeHandler}
-          defaultValue={ready && authenticated && user.wallet ? user.wallet.address : sendTo}
-        />
-      </>
-      )}
-      <button onClick={handleSubmission}>Submit</button>
-      <button className={styles.logout} onClick={logout}>Logout</button>
-      </>
+          <label className={styles.formInput} onChange={fileChangeHandler} htmlFor="file">
+            <input name="" type="file" id="file" hidden />
+            <p>{!selectedFile ? "Select File" : `${selectedFile.name}`}</p>
+          </label>
+          <label>Name</label>
+          <input type='text' placeholder='Cool NFT' onChange={nameChangeHandler} />
+          <label>Description</label>
+          <input
+            type='text'
+            placeholder='This NFT is just so cool'
+            onChange={descriptionChangeHandler}
+          />
+          <label>Your Website</label>
+          <input
+            type='text'
+            placeholder='https://pinata.cloud'
+            onChange={externalURLChangeHandler}
+          />
+          {ready && authenticated && !user.wallet && (
+            <>
+              <label>Wallet Address</label>
+              <input
+                type='text'
+                placeholder='0x...'
+                onChange={sendToChangeHandler}
+                defaultValue={ready && authenticated && user.wallet ? user.wallet.address : sendTo}
+              />
+            </>
+          )}
+          <button onClick={handleSubmission}>Submit</button>
+          <button className={styles.logout} onClick={logout}>Logout</button>
+        </>
       )}
       {isLoading && (
         <div className={styles.form}>
@@ -151,7 +110,7 @@ const Form = () => {
             size={200}
             aria-label="loading spinner"
             color="#aa76ff"
-            />
+          />
           <h2>{message}</h2>
         </div>
       )}
@@ -159,7 +118,7 @@ const Form = () => {
         <div className={styles.form}>
           <h4>{message}</h4>
           <a href={osLink} target="_blank" className={styles.link} rel="noreferrer"><h3>Link to NFT</h3></a>
-          <button onClick={() => setIsComplete(false) } className={styles.logout}>Mint Another NFT</button>
+          <button onClick={() => setIsComplete(false)} className={styles.logout}>Mint Another NFT</button>
         </div>
       )}
     </div>
