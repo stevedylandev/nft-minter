@@ -1,24 +1,25 @@
 import { useState } from 'react'
 import axios from 'axios'
 import styles from '@/styles/Form.module.css'
-import RingLoader from "react-spinners/RingLoader"
-import { usePrivy } from "@privy-io/react-auth"
+import ScaleLoader from "react-spinners/ScaleLoader"
 import fireConfetti from "../../utils/confetti"
+import { useAccount, WindowProvider, useNetwork } from 'wagmi'
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
-const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
 
 const Form = () => {
   const [selectedFile, setSelectedFile] = useState()
   const [name, setName] = useState()
   const [description, setDescription] = useState()
   const [externalURL, setExternalURL] = useState()
-  const [sendTo, setSendTo] = useState()
   const [osLink, setOsLink] = useState("https://opensea.io")
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
   const [isComplete, setIsComplete] = useState(false)
 
-  const { ready, authenticated, user, logout } = usePrivy()
+
+  const { address } = useAccount()
+
   const fileChangeHandler = (event) => {
     setSelectedFile(event.target.files[0])
   }
@@ -31,9 +32,6 @@ const Form = () => {
   const externalURLChangeHandler = (event) => {
     setExternalURL(event.target.value)
   }
-  const sendToChangeHandler = (event) => {
-    setSendTo(event.target.value)
-  }
 
   const handleSubmission = async () => {
     setIsLoading(true)
@@ -41,10 +39,10 @@ const Form = () => {
     const key = tempKey.data
     const formData = new FormData()
 
-    formData.append('file', selectedFile)
+    formData.append('file', selectedFile, { filepath: selectedFile.name })
 
     const metadata = JSON.stringify({
-      name: '${selectedFile}',
+      name: `${selectedFile.name}`,
     })
     formData.append('pinataMetadata', metadata)
 
@@ -55,44 +53,54 @@ const Form = () => {
 
     try {
       setMessage("Uploading File...")
-      const uploadRes = await axios.post(
-        'https://api.pinata.cloud/pinning/pinFileToIPFS',
-        formData,
-        {
-          maxBodyLength: 'Infinity',
-          headers: {
-            'Content-Type': `multipart/form-data; boundary=${formData._boundary}`,
-            Authorization: `Bearer ${key}`,
-          },
-        }
-      )
-      const hash = uploadRes.data.IpfsHash
+      const uploadRes = await fetch('https://api.pinata.cloud/pinning/pinFileToIPFS', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${key}`,
+        },
+        body: formData
+      })
+      const uploadResJson = await uploadRes.json()
+      const hash = uploadResJson.IpfsHash
 
       const jsonData = JSON.stringify({
         name: name,
         description: description,
-        image: `https://discordpinnie.mypinata.cloud/ipfs/${hash}`,
+        image: `${process.env.NEXT_PUBLIC_PINATA_DEDICATED_GATEWAY + hash}`,
         external_url: externalURL
       })
+
       setMessage("Uploading Metadata...")
-      const jsonRes = await axios.post("https://api.pinata.cloud/pinning/pinJSONToIPFS", jsonData, {
-        maxBodyLength: 'Infinity',
+
+      const jsonRes = await fetch("https://api.pinata.cloud/pinning/pinJSONToIPFS", {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${key}`,
         },
+        body: jsonData
       })
-      const uri = jsonRes.data.IpfsHash
+      const jsonResData = await jsonRes.json()
+      const uri = jsonResData.IpfsHash
 
-      const mintBody = {
-        walletAddress: ready ? user.wallet.address : sendTo,
+      const mintBody = JSON.stringify({
+        address: address,
         uri: `https://discordpinnie.mypinata.cloud/ipfs/${uri}`
-      }
+      })
 
       setMessage("Minting NFT...")
-      const mintRes = await axios.post("/api/mint", mintBody)
+      const mintRes = await fetch("/api/mint", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: mintBody
+      })
+      const mintResData = await mintRes.json()
 
-      setOsLink(`https://testnets.opensea.io/assets/goerli/${contractAddress}/${mintRes.data.mintTxn.events.Transfer.returnValues.tokenId}`)
+      const contractAddress = mintResData.onChain.contractAddress
+      const nftId = mintResData.onChain.tokenId
+      setOsLink(`https://testnets.opensea.io/assets/mumbai/${contractAddress}/${nftId}`)
       setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)
@@ -128,29 +136,13 @@ const Form = () => {
             placeholder='https://pinata.cloud'
             onChange={externalURLChangeHandler}
           />
-          {ready && authenticated && !user.wallet && (
-            <>
-              <label>Wallet Address</label>
-              <input
-                type='text'
-                placeholder='0x...'
-                onChange={sendToChangeHandler}
-                defaultValue={ready && authenticated && user.wallet ? user.wallet.address : sendTo}
-              />
-            </>
-          )}
           <button onClick={handleSubmission}>Submit</button>
-          <button className={styles.logout} onClick={logout}>Logout</button>
+          <ConnectButton />
         </>
       )}
       {isLoading && (
         <div className={styles.form}>
-          <RingLoader
-            loading={isLoading}
-            size={200}
-            aria-label="loading spinner"
-            color="#aa76ff"
-          />
+          <ScaleLoader color="#6D57FF" height="150px" width="15px" />
           <h2>{message}</h2>
         </div>
       )}

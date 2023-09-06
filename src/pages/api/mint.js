@@ -1,26 +1,48 @@
-import { DefenderRelayProvider } from "defender-relay-client/lib/web3"
-import Web3 from "web3"
-import abi from "../../utils/abi.json"
 import { v4 as uuidv4 } from 'uuid';
 
-const credentials = { apiKey: `${process.env.NEXT_PUBLIC_DEFENDER_KEY}`, apiSecret: `${process.env.NEXT_PUBLIC_DEFENDER_SECRET_KEY}` }
-const provider = new DefenderRelayProvider(credentials, { speed: 'fast' });
-//const signer = new DefenderRelaySigner(credentials, provider, { speed: 'fast' });
-const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS
-const web3 = new Web3(provider)
 const pinataJWT = process.env.PINATA_JWT
+
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
     try {
-      const address = req.body.walletAddress.toString()
-      const uri = req.body.uri.toString()
+      const data = JSON.stringify({
+        recipient: `polygon:${req.body.address}`,
+        metadata: req.body.uri,
+      })
 
-      const [from] = await web3.eth.getAccounts()
-      const contract = new web3.eth.Contract(abi.output.abi, contractAddress, { from })
-      const mintTxn = await contract.methods.safeMint(address, uri).send()
+      const mintRes = await fetch(`https://staging.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`, {
+        method: 'POST',
+        headers: {
+          accept: 'application/json',
+          'content-type': 'application/json',
+          'x-client-secret': `${process.env.CROSSMINT_CLIENT_SECRET}`,
+          'x-project-id': `${process.env.CROSSMINT_PROJECT_ID}`
+        },
+        body: data
+      })
 
-      res.status(200).json({ mintTxn })
+      const mintResJson = await mintRes.json()
+      console.log(mintResJson)
+
+      await delay(20000);
+
+
+      const mintStatus = await fetch(`https://staging.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/${mintResJson.id}`, {
+        method: 'GET',
+        headers: {
+          accept: 'application/json',
+          'x-client-secret': `${process.env.CROSSMINT_CLIENT_SECRET}`,
+          'x-project-id': `${process.env.CROSSMINT_PROJECT_ID}`
+        }
+      })
+
+      const mintStatusJson = await mintStatus.json()
+      console.log(mintStatusJson)
+
+      res.status(200).json(mintStatusJson)
     } catch (error) {
       console.log(error)
       res.status(500).json({ text: "Error minting NFT", error: error })

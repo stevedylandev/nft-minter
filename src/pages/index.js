@@ -1,22 +1,18 @@
 import Head from 'next/head'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
-import {usePrivy} from '@privy-io/react-auth';
 import Form from "./components/Form"
 import Image from "next/image"
 import pinnie from "../../public/Pinnie.svg"
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi'
+
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  const { login } = usePrivy()
 
-   const { ready, authenticated } = usePrivy()
-
-    if (!ready) {
-        // Do nothing while the PrivyProvider initializes with updated user state
-        return <></>;
-    }
+  const { isConnected } = useAccount()
 
   return (
     <>
@@ -28,14 +24,14 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className={styles.container}>
-        <Image src={pinnie} alt="Pinnie Logo" height={75} />
-        <h1 className={inter.className}>Pinata NFT Minter</h1>
-        {!authenticated && ready && (
-          <button className={styles.loginButton} onClick={login}>Login</button>
-        )}
-        {authenticated && ready && (
-          <Form />
-        )}
+          <Image src={pinnie} alt="Pinnie Logo" height={75} />
+          <h1 className={inter.className}>Pinata NFT Minter</h1>
+          {!isConnected && (
+            <ConnectButton />
+          )}
+          {isConnected && (
+            <Form />
+          )}
         </div>
       </main>
     </>
