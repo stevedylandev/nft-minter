@@ -25,7 +25,6 @@ export default async function handler(req, res) {
       })
 
       const mintResJson = await mintRes.json()
-      console.log(mintResJson)
 
       await delay(20000);
 
@@ -40,7 +39,6 @@ export default async function handler(req, res) {
       })
 
       const mintStatusJson = await mintStatus.json()
-      console.log(mintStatusJson)
 
       res.status(200).json(mintStatusJson)
     } catch (error) {

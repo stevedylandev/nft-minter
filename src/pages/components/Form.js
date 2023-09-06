@@ -116,6 +116,9 @@ const Form = () => {
 
   return (
     <div className={styles.form}>
+      <div className={styles.button}>
+        <ConnectButton />
+      </div>
       {!isLoading && !isComplete && (
         <>
           <label className={styles.formInput} onChange={fileChangeHandler} htmlFor="file">
@@ -137,7 +140,6 @@ const Form = () => {
             onChange={externalURLChangeHandler}
           />
           <button onClick={handleSubmission}>Submit</button>
-          <ConnectButton />
         </>
       )}
       {isLoading && (
