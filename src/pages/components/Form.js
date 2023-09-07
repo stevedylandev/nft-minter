@@ -100,7 +100,7 @@ const Form = () => {
 
       const contractAddress = mintResData.onChain.contractAddress
       const nftId = mintResData.onChain.tokenId
-      setOsLink(`https://testnets.opensea.io/assets/mumbai/${contractAddress}/${nftId}`)
+      setOsLink(`https://opensea.io/assets/matic/${contractAddress}/${nftId}`)
       setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)

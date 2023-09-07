@@ -41,6 +41,7 @@ export default async function handler(req, res) {
       const mintStatusJson = await mintStatus.json()
 
       res.status(200).json(mintStatusJson)
+      console.log(mintStatusJson)
     } catch (error) {
       console.log(error)
       res.status(500).json({ text: "Error minting NFT", error: error })
