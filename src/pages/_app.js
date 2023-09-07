@@ -49,7 +49,7 @@ export default function App({ Component, pageProps }) {
         <WagmiConfig config={wagmiConfig}>
           <RainbowKitProvider
             chains={chains}
-            initialChain={polygonMumbai}
+            initialChain={polygon}
             theme={darkTheme({
               accentColor: "#5F61EA",
               accentColorForeground: 'white',
