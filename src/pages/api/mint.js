@@ -26,7 +26,7 @@ export default async function handler(req, res) {
 
       const mintResJson = await mintRes.json()
 
-      await delay(20000);
+      await delay(30000);
 
 
       const mintStatus = await fetch(`https://www.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/${mintResJson.id}`, {
