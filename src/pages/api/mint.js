@@ -22,22 +22,27 @@ export default async function handler(req, res) {
 
       const mintResJson = await mintRes.json()
 
-      await delay(30000);
+      if (mintResJson.onChain.status === "pending") {
+        while (true) {
+          delay(5000)
 
+          const mintStatus = await fetch(`https://www.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/${mintResJson.id}`, {
+            method: 'GET',
+            headers: {
+              accept: 'application/json',
+              'x-client-secret': `${process.env.CROSSMINT_CLIENT_SECRET}`,
+              'x-project-id': `${process.env.CROSSMINT_PROJECT_ID}`
+            }
+          })
 
-      const mintStatus = await fetch(`https://www.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/${mintResJson.id}`, {
-        method: 'GET',
-        headers: {
-          accept: 'application/json',
-          'x-client-secret': `${process.env.CROSSMINT_CLIENT_SECRET}`,
-          'x-project-id': `${process.env.CROSSMINT_PROJECT_ID}`
+          const mintStatusJson = await mintStatus.json()
+
+          if (mintStatusJson.onChain.status === "success") {
+            res.status(200).json(mintStatusJson)
+            return
+          }
         }
-      })
-
-      const mintStatusJson = await mintStatus.json()
-
-      res.status(200).json(mintStatusJson)
-      console.log(mintStatusJson)
+      }
     } catch (error) {
       console.log(error)
       res.status(500).json({ text: "Error minting NFT", error: error })

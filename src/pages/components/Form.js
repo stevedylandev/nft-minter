@@ -41,7 +41,6 @@ const Form = () => {
       }
     })
     const tempKeyJson = await tempKey.json()
-    console.log(tempKey)
     const key = tempKeyJson.JWT
     const formData = new FormData()
 
