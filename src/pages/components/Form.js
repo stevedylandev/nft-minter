@@ -102,9 +102,8 @@ const Form = () => {
         body: mintBody
       })
       const mintResData = await mintRes.json()
-      const contractAddress = mintResData.onChain.contractAddress
-      const nftId = mintResData.onChain.tokenId
-      setOsLink(`https://opensea.io/assets/matic/${contractAddress}/${nftId}`)
+      console.log(mintResData)
+      setOsLink(`https://opensea.io/assets/matic/${mintResData.onChain.contractAddress}/${mintResData.onChain.tokenId}`)
 
       const deleteData = JSON.stringify({
         apiKey: tempKeyJson.pinata_api_key,
