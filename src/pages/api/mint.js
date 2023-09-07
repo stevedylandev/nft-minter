@@ -1,7 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
-const pinataJWT = process.env.PINATA_JWT
-
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 
@@ -45,33 +41,6 @@ export default async function handler(req, res) {
     } catch (error) {
       console.log(error)
       res.status(500).json({ text: "Error minting NFT", error: error })
-    }
-  } else if (req.method === "GET") {
-    try {
-      const uuid = uuidv4();
-      const body = JSON.stringify({
-        keyName: uuid.toString(),
-        permissions: {
-          admin: true
-        },
-        maxUses: 2
-      })
-      const keyRes = await fetch('https://api.pinata.cloud/users/generateApiKey', {
-        method: 'POST',
-        body: body,
-        headers: {
-          accept: 'application/json',
-          'content-type': 'application/json',
-          authorization: `Bearer ${pinataJWT}`
-        }
-      })
-      const keyResJson = await keyRes.json()
-      const { JWT } = keyResJson
-      return res.send(JWT)
-
-    } catch (error) {
-      console.log(error.message)
-      res.status(500).json({ text: "Error creating API Key", error: error })
     }
   }
 }

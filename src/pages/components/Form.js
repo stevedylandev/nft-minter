@@ -1,9 +1,8 @@
 import { useState } from 'react'
-import axios from 'axios'
 import styles from '@/styles/Form.module.css'
 import ScaleLoader from "react-spinners/ScaleLoader"
 import fireConfetti from "../../utils/confetti"
-import { useAccount, WindowProvider, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 
@@ -35,8 +34,15 @@ const Form = () => {
 
   const handleSubmission = async () => {
     setIsLoading(true)
-    const tempKey = await axios.get("/api/mint")
-    const key = tempKey.data
+    const tempKey = await fetch("/api/key", {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    const tempKeyJson = await tempKey.json()
+    console.log(tempKey)
+    const key = tempKeyJson.JWT
     const formData = new FormData()
 
     formData.append('file', selectedFile, { filepath: selectedFile.name })
@@ -97,11 +103,20 @@ const Form = () => {
         body: mintBody
       })
       const mintResData = await mintRes.json()
-      console.log(mintResData)
-
       const contractAddress = mintResData.onChain.contractAddress
       const nftId = mintResData.onChain.tokenId
       setOsLink(`https://opensea.io/assets/matic/${contractAddress}/${nftId}`)
+
+      const deleteData = JSON.stringify({
+        apiKey: tempKeyJson.pinata_api_key,
+      })
+      const deleteKey = await fetch("/api/key", {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: deleteData
+      })
       setMessage("Minting Complete!")
       setIsLoading(false)
       setIsComplete(true)
