@@ -4,7 +4,7 @@ import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultWallets,
   RainbowKitProvider,
-  darkTheme
+  darkTheme,
 } from '@rainbow-me/rainbowkit';
 import { configureChains, createConfig, WagmiConfig } from 'wagmi';
 import {
@@ -12,6 +12,8 @@ import {
 } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { publicProvider } from 'wagmi/providers/public';
+
+
 
 const { chains, publicClient } = configureChains(
   [polygonMumbai],

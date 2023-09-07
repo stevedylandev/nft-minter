@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         metadata: req.body.uri,
       })
 
-      const mintRes = await fetch(`https://staging.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`, {
+      const mintRes = await fetch(`https://www.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts`, {
         method: 'POST',
         headers: {
           accept: 'application/json',
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       await delay(20000);
 
 
-      const mintStatus = await fetch(`https://staging.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/${mintResJson.id}`, {
+      const mintStatus = await fetch(`https://www.crossmint.com/api/2022-06-09/collections/${process.env.CROSSMINT_COLLECTION_ID}/nfts/${mintResJson.id}`, {
         method: 'GET',
         headers: {
           accept: 'application/json',
