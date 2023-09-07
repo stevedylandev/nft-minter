@@ -97,6 +97,7 @@ const Form = () => {
         body: mintBody
       })
       const mintResData = await mintRes.json()
+      console.log(mintResData)
 
       const contractAddress = mintResData.onChain.contractAddress
       const nftId = mintResData.onChain.tokenId
