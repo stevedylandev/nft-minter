@@ -3,7 +3,7 @@ import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import Form from "./components/Form"
 import Image from "next/image"
-import pinnie from "../../public/Pinnie.svg"
+import pinnie from "../../public/Pinnie.png"
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi'
 
