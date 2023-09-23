@@ -129,12 +129,9 @@ const Form = () => {
 
 
   return (
-    <div className={styles.form}>
-      <div className={styles.button}>
-        <ConnectButton />
-      </div>
+    <div className="flex justify-center items-center flex-col m-auto w-full">
       {!isLoading && !isComplete && (
-        <>
+        <div className="flex flex-col items-center">
           <label className={styles.formInput} onChange={fileChangeHandler} htmlFor="file">
             <input name="" type="file" id="file" hidden />
             <p>{!selectedFile ? "Select File" : `${selectedFile.name}`}</p>
@@ -154,7 +151,7 @@ const Form = () => {
             onChange={externalURLChangeHandler}
           />
           <button onClick={handleSubmission}>Submit</button>
-        </>
+        </div>
       )}
       {isLoading && (
         <div className={styles.form}>
