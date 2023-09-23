@@ -1,23 +1,32 @@
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@tailwind base;
+@layer base {
+  :root {
+    color-scheme: dark;
+    --theme-bg: #171420;
+    --theme-text: #F6F6F6;
+    --theme-accent: #6D57FF;
+    --theme-modal-text: #212121;
+  }
+  html {
+    @apply h-full scroll-smooth font-sans;
+  }
+
+  html body {
+    @apply h-screen w-full mx-auto bg-bgColor text-textColor;
+  }
+}
+@tailwind components;
+@tailwind utilities;
+@font-face {
+  font-family: "Agrandir";
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('/fonts/AgrandirVariable.woff2') format('woff2');
+}
+@font-face {
+  font-family: "Telegraf";
+  font-style: normal;
+  font-weight: 100 900;
+  src: url('/fonts/TelegrafVariable.woff2') format('woff2');
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  font-family: sans-serif;
-  background-color: #212121;
-  color: #FFFFFF;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button {
-  color: #ffffff;
-}
