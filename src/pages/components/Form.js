@@ -3,14 +3,16 @@ import styles from '@/styles/Form.module.css'
 import ScaleLoader from "react-spinners/ScaleLoader"
 import fireConfetti from "../../utils/confetti"
 import { useAccount } from 'wagmi'
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-
+import Input from './Input'
+import FileInput from './FileInput'
+import Button from './Button'
+import Link from './Link'
 
 const Form = () => {
   const [selectedFile, setSelectedFile] = useState()
   const [name, setName] = useState()
   const [description, setDescription] = useState()
-  const [externalURL, setExternalURL] = useState()
+  const [externalURL, setExternalURL] = useState("https://pinata.cloud")
   const [osLink, setOsLink] = useState("https://opensea.io")
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState("")
@@ -33,6 +35,10 @@ const Form = () => {
   }
 
   const handleSubmission = async () => {
+    if (!selectedFile || !name || !description || !externalURL) {
+      alert("Please fill out all fields")
+      return
+    }
     setIsLoading(true)
     const tempKey = await fetch("/api/key", {
       method: 'GET',
@@ -129,44 +135,27 @@ const Form = () => {
 
 
   return (
-    <div className={styles.form}>
-      <div className={styles.button}>
-        <ConnectButton />
-      </div>
+    <div className="flex justify-center items-center flex-col m-auto w-full">
       {!isLoading && !isComplete && (
-        <>
-          <label className={styles.formInput} onChange={fileChangeHandler} htmlFor="file">
-            <input name="" type="file" id="file" hidden />
-            <p>{!selectedFile ? "Select File" : `${selectedFile.name}`}</p>
-          </label>
-          <label>Name</label>
-          <input type='text' placeholder='Cool NFT' onChange={nameChangeHandler} />
-          <label>Description</label>
-          <input
-            type='text'
-            placeholder='This NFT is just so cool'
-            onChange={descriptionChangeHandler}
-          />
-          <label>Your Website</label>
-          <input
-            type='text'
-            placeholder='https://pinata.cloud'
-            onChange={externalURLChangeHandler}
-          />
-          <button onClick={handleSubmission}>Submit</button>
-        </>
+        <div className="flex flex-col items-center gap-6">
+          <FileInput onChange={fileChangeHandler} selectedFile={selectedFile} />
+          <Input label="Name" placeHolder="Cool NFT" onChange={nameChangeHandler} />
+          <Input label="Description" placeHolder="This NFT is just so cool" onChange={descriptionChangeHandler} />
+          <Input label="External URL" placeHolder="https://pinata.cloud" onChange={externalURLChangeHandler} />
+          <Button buttonClick={handleSubmission} bg="accent" bgHover="accent2" text="Submit" />
+        </div>
       )}
       {isLoading && (
-        <div className={styles.form}>
+        <div className="flex flex-col justify-center items-center gap-6">
           <ScaleLoader color="#6D57FF" height="150px" width="15px" />
-          <h2>{message}</h2>
+          <h2 className="text-2xl font-telegraf font-bold">{message}</h2>
         </div>
       )}
       {isComplete && (
-        <div className={styles.form}>
-          <h4>{message}</h4>
-          <a href={osLink} target="_blank" className={styles.link} rel="noreferrer"><h3>Link to NFT</h3></a>
-          <button onClick={() => setIsComplete(false)} className={styles.logout}>Mint Another NFT</button>
+        <div className="flex flex-col justify-center items-center gap-6">
+          <h2 className="text-2xl font-telegraf font-bold">{message}</h2>
+          <Link href={osLink} bg="accent" bgHover="accent2" />
+          <Button buttonClick={() => setIsComplete(false)} bg="gray-500" bgHover="gray-400" text="Mint Another NFT" />
         </div>
       )}
     </div>
