@@ -18,6 +18,7 @@ module.exports = {
         modalTextColor: "var(--theme-modal-text)",
         link: "var(--theme-link)",
         accent: "var(--theme-accent)",
+        accent2: "var(--theme-accent-2)",
       },
       fontFamily: {
         // Add any custom fonts here

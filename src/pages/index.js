@@ -1,11 +1,8 @@
 import Head from 'next/head'
 import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
 import Form from "./components/Form"
 import Navbar from "./components/Navbar"
 import Footer from "./components/Footer"
-import Image from "next/image"
-import pinnie from "../../public/Pinnie.png"
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi'
 
@@ -24,14 +21,13 @@ export default function Home() {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <link rel='icon' href='/favicon.ico' />
       </Head>
-      <main className={`flex flex-col justify-between min-h-screen h-full ${!isConnected ? 'bg-hero-bubbles bg-cover' : ''}`}>
+      <main className={`flex flex-col justify-between min-h-screen h-full bg-hero-bubbles bg-cover`}>
         <div className="my-4 max-w-screen-xl flex flex-col justify-center mx-auto w-full">
           <Navbar />
         </div>
 
-        <div className="my-4 max-w-screen-xl flex flex-col justify-center items-center h-full mx-auto">
-          <Image src={pinnie} alt="Pinnie Logo" height={75} />
-          <h1 className={inter.className}>Pinata NFT Minter</h1>
+        <div className="my-4 max-w-screen-xl flex flex-col justify-center items-center h-full mx-auto gap-6">
+          <h1 className="font-agrandir text-7xl font-bold mb-9">Pinata NFT Minter</h1>
           {!isConnected && (
             <ConnectButton />
           )}
